@@ -1,51 +1,43 @@
-* {margin: 0; padding: 0; font-family: sans-serif; }
-body { background-color: ghostwhite; }
+* { margin: 0; padding: 0; font-family: sans-serif; }
+body { background-color: ghostwhite; height: 100vh; }
 
-.box-input-wpl {
-	width: 35%; min-width: 280px; margin-left: auto; margin-right: auto;
-	padding: 20px; margin-top: 2%; text-align: center;
-}
+form { text-align: center; padding: 5%; }
+form input[type=text] { font-size: 1rem; outline: none; padding: 2px; }
+form input[type=submit] { font-size: 1rem; margin-top: 15px; padding: 2px; width: 180px; cursor: pointer; }
 
-.box-input-wpl h2 {
-	color: white; padding-bottom: 10px; 
-}
 
-.box-input-wpl button {
-	background-color: transparent; color: white; border: 1px solid white; padding: 3px; cursor: pointer; transition: 0.5s;
-	margin-left: 10px;
-}
+.box-input-wpl { width: 35%; min-width: 280px; margin-left: auto; margin-right: auto; padding: 20px; margin-top: 2%; text-align: center; }
+.box-input-wpl h2 {	color: white; padding-bottom: 10px; }
+.box-input-wpl button {	background-color: transparent; color: white; border: 1px solid white; padding: 3px; cursor: pointer; transition: 0.5s; margin-left: 10px; }
 .box-input-wpl button:hover { background-color: rgb(70,70,70); }
-
-.box-input-wpl input {
-	padding: 2px; outline: none; 
-}
-
+.box-input-wpl input { padding: 2px; outline: none; }
 .container-wpl {
-	width: 50%; min-width: 768px; margin-left: auto; margin-right: auto; background-color: rgba(240,240,240);
-
+	width: 50%; min-width: 400px; margin-left: auto; margin-right: auto; background-color: rgba(240,240,240);
+	height: 100%;
 }
 .container-wpl h2 { text-align: center;	padding: 2%; }
-.container-wpl p { text-align: center; }
-
-#items-wpl-1 {
-	margin-top: 5%;
-}
-
-.item {
-	display: flex; flex-wrap: nowrap; width: 50%; margin-bottom: 10px; margin-top: 10px; 
-	margin-left: auto; margin-right: auto;
-}
-.item input[type=checkbox]{ margin: 0px 5px 0px 5px; }
+.container-wpl p { text-align: center; margin-bottom: 30px; }
+#items-wpl-1 { margin-top: 5%; }
+.item { display: flex; flex-wrap: nowrap; width: 50%; min-width: 300px; max-width: 400px; margin-bottom: 10px; margin-top: 10px; margin-left: auto; margin-right: auto;}
+.item input[type=checkbox]{ margin: 0px 5px 0px 5px; width: 20px; height: 20px; }
 .item h4 { margin-left: 10px; margin-right: 10px; }
 .item label { font-size: 1.1rem; margin-right: 10px;  }
 .item h3 { margin-left: auto;  }
-
-
+.unterschrift { margin-top: 30px; }
 #sig-canvas {
   border: 2px dotted #CCCCCC;
-  border-radius: 15px;
+  border-radius: 5px;
   cursor: crosshair;
   margin-left: auto; margin-right: auto; display: block; margin-top: 15px;
 }
+.row-btn { text-align: center; padding: 3%; }
+.sig-btn { padding: 5px; width: 150px; font-size: 0.9rem; border: 1px solid darkgray; outline:none; cursor: pointer; }
 
-.btn-remove { background-color: red; }
+@media only screen and (max-width: 1250px) {
+	.container-wpl {
+		width: 100%; overflow: hidden;
+	}
+	.unterschrift canvas {
+		width: 400px;
+	}
+}

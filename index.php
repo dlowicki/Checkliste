@@ -9,10 +9,19 @@
 	</head>
 	<body>
 		<?php
-		if(isset($_GET['wplID']))
+		if(!isset($_GET['wplID']))
 		{
+			echo '<form method="GET">';
+			echo '<input type="text" name="wplID" placeholder="ArbeitsplatzID..."><br>';
+			echo '<input type="submit" id="btn-wplid" value="Arbeitsplatz aufsuchen">';
+			echo '</form>';
 			return;
 		}
+
+		//wplID ist gesetzt
+		$wplID = (int) filter_var($_GET['wplID'], FILTER_SANITIZE_NUMBER_INT);
+		if(strlen($wplID) < 2) { header('Location: index.php'); return; }
+
 		?>
 		<!--<div class="box-input-wpl">
 			<h2>Identifikation eintragen</h2>
@@ -22,7 +31,7 @@
 
 		<div class="container-wpl">
 			<!-- Logo von Schrauben-Jäger / Werkzeug-Jäger -->
-			<h2>Arbeitsplatz WPL003</h2>
+			<h2>Arbeitsplatz WPL<?php echo $wplID ?></h2>
 
 			<p>Folgende Gegenstaende wurden empfangen:</p>
 
@@ -44,19 +53,16 @@
 
 				<!-- Content -->
 			<div class="unterschrift">
+				<div class="row"> <p>Geprueft und bestaetigt von David Lowicki</p> </div>
 				<div class="row">
-					<p>Geprueft und bestaetigt von David Lowicki</p>
+		 			<canvas id="sig-canvas" width="620" height="160">
+		 				Ihr Browser unterstüzt keine digitale Unterschrift!
+		 			</canvas>
 				</div>
-				<div class="row">
-					<div class="col-md-12">
-		 				<canvas id="sig-canvas" width="620" height="160">
-		 					Ihr Browser unterstüzt keine digitale Unterschrift!
-		 				</canvas>
-		 			</div>
-				</div>
-				<div class="row">
+				<div class="row-btn">
 					<div class="">
-						<button class="btn-remove" id="sig-clearBtn">Unterschrift loeschen</button>
+						<button class="sig-btn" id="sig-sendData">Bestaetigen</button>
+						<button class="sig-btn" id="sig-clearBtn">Unterschrift loeschen</button>
 					</div>
 				</div>
 	</div>
