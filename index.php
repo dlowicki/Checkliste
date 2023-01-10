@@ -20,7 +20,12 @@
 
 		//wplID ist gesetzt
 		$wplID = (int) filter_var($_GET['wplID'], FILTER_SANITIZE_NUMBER_INT);
+    // Wenn Länge von ID kleiner als 2 => Abbrechen und zurücksetzen
 		if(strlen($wplID) < 2) { header('Location: index.php'); return; }
+    // Überprüfen, ob ID in Matrix Datenbank existiert und ggf. Geräte aus Datenbank ziehen
+
+    // Wenn Geräte aus Datenbank kleiner als 1 => Ausgeben, dass keine Geräte für diesen Arbeitsplatz registriert sind
+
 
 		?>
 		<!--<div class="box-input-wpl">
@@ -30,10 +35,10 @@
 		</div>-->
 
 		<div class="container-wpl">
-			<!-- Logo von Schrauben-J�ger / Werkzeug-J�ger -->
+			<!-- Logo von Schrauben-Jäger / Werkzeug-Jöger -->
 			<h2>Arbeitsplatz WPL<?php echo $wplID ?></h2>
 
-			<p>Folgende Gegenstaende wurden empfangen:</p>
+			<p>Bitte die Gegenstände anhaken, die empfangen wurden:</p>
 
 			<div class='items-wpl-1'>
 				<div id="item1" class="item">
@@ -53,16 +58,16 @@
 
 				<!-- Content -->
 			<div class="unterschrift">
-				<div class="row"> <p>Geprueft und bestaetigt von David Lowicki</p> </div>
+				<div class="row"> <p>Geprüft und bestätigt von David Lowicki</p> </div>
 				<div class="row">
 		 			<canvas id="sig-canvas" width="620" height="160">
-		 				Ihr Browser unterst�zt keine digitale Unterschrift!
+		 				Ihr Browser unterstüzt keine digitale Unterschrift!
 		 			</canvas>
 				</div>
 				<div class="row-btn">
 					<div class="">
-						<button class="sig-btn" id="sig-sendData">Bestaetigen</button>
-						<button class="sig-btn" id="sig-clearBtn">Unterschrift loeschen</button>
+						<button class="sig-btn" id="sig-sendData">Bestätigen</button>
+						<button class="sig-btn" id="sig-clearBtn">Unterschrift löschen</button>
 					</div>
 				</div>
 	</div>
@@ -95,23 +100,14 @@
   };
   var lastPos = mousePos;
 
-  canvas.addEventListener("mousedown", function(e) {
-    drawing = true;
-    lastPos = getMousePos(canvas, e);
-  }, false);
+  canvas.addEventListener("mousedown", function(e) { drawing = true; lastPos = getMousePos(canvas, e); }, false);
 
-  canvas.addEventListener("mouseup", function(e) {
-    drawing = false;
-  }, false);
+  canvas.addEventListener("mouseup", function(e) { drawing = false; }, false);
 
-  canvas.addEventListener("mousemove", function(e) {
-    mousePos = getMousePos(canvas, e);
-  }, false);
+  canvas.addEventListener("mousemove", function(e) { mousePos = getMousePos(canvas, e); }, false);
 
   // Add touch event support for mobile
-  canvas.addEventListener("touchstart", function(e) {
-
-  }, false);
+  canvas.addEventListener("touchstart", function(e) { }, false);
 
   canvas.addEventListener("touchmove", function(e) {
     var touch = e.touches[0];
@@ -190,7 +186,7 @@
   submitBtn.addEventListener("click", function(e) {
     var dataUrl = canvas.toDataURL();
     sigText.innerHTML = dataUrl;
-    sigImage.setAttribute("src", dataUrl);
+    //sigImage.setAttribute("src", dataUrl);
   }, false);
 
 })();
