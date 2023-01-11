@@ -1,5 +1,12 @@
 <?php
-$wplID = "33";
+
+if(!isset($_POST['jSign']) && !isset($_POST['jID']))
+{
+   echo "PDF konnte nicht generiert werden, Unterschrift wurde nicht gesetzt";
+   return;
+}
+
+$wplID = $_POST['jID'];
 $wplDatum = date("d.m.Y");
 $wplBearbeiter = "David Lowicki";
 
@@ -7,7 +14,9 @@ $wplBearbeiter = "David Lowicki";
 
 $wplItems = array(
     array(true, '1x','Jabra 2 Evolve 65','#3556'),
-    array(false, '1x','NBSJ3410','#3557')
+    array(false, '1x','NBSJ3410','#3557'),
+    array(true, '1x','Maus','#3558'),
+    array(true, '1x','Tastatur','#3559')
 );
 
 $pdfName = 'Checkliste_WPL' . $wplID . '.pdf';
@@ -19,7 +28,7 @@ $html = '
 <h4 style="text-align: right; font-weight: 100;">Erstellt am '.$wplDatum.'</h4>
 <div></div><div></div><div></div>
 <h2 style="font-weight: 100;">Checkliste von Arbeitsplatz <b>WPL'.$wplID.'</b></h2>
-<div></div>
+<div></div><div></div>
 <h3 style="font-weight: 100; font-size: 11rem;">Hiermit bestätige ich den Erhalt der folgenden <b>Gegenstände</b> am <b>'.$wplDatum.'</b></h3>
 <br>
 <br>
@@ -45,7 +54,7 @@ $html = '
  $html .= '
 <br>
 <br>
-<h3 style="font-weight: 100; font-size: 11rem;">Folgende Gegenstände wurden noch nicht in Empfang genommen</h3>
+<h3 style="font-weight: 100; font-size: 11rem;">Folgende Gegenstände wurden nicht bestätigt</h3>
 <br>
 <br>
 <table cellpadding="5" cellspacing="0" style="width: 80%;"border="0">
@@ -65,6 +74,12 @@ $html = '
     }
  }
  $html .= '</table>';
+
+ $html .=   '<div></div><div></div><div></div>
+            <h3 style="font-weight: 100; font-size: 11rem;">Unterschrieben und abgesegnet</h3>
+            <div></div>
+            <img src="'.$_POST["jSign"].'">
+            ';
  
 
 /*-------------------------------------------------*/
@@ -108,8 +123,8 @@ $pdf->writeHTML($html, true, false, true, false, '');
 //Ausgabe der PDF
  
 //Variante 1: PDF direkt an den Benutzer senden:
-$pdf->Output($pdfName, 'I');
-//$pdf->Output(dirname(__FILE__).'/'.$pdfName, 'F');
+//$pdf->Output($pdfName, 'I');
+$pdf->Output(dirname(__FILE__).'/'.$pdfName, 'F');
 //echo 'PDF herunterladen: <a href="'.$pdfName.'">'.$pdfName.'</a>';
  
 
