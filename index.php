@@ -42,24 +42,24 @@
 			<p>Bitte die Gegenstände markieren, die empfangen wurden:</p>
 
 			<div class='items-wpl-1'>
+				<div id="item0" class="item">
+					<input type="checkbox" id="item0-check">
+					<h4 id="item0-amount">1x</h4>
+					<label for="item0-check" id="item0-object"> Jabra 2 Evolve 65</label>
+					<h3 id="item0-inventar">#3556</h3>
+				</div>
+
 				<div id="item1" class="item">
 					<input type="checkbox" id="item1-check">
 					<h4 id="item1-amount">1x</h4>
-					<label for="item1-check" id="item1-object"> Jabra 2 Evolve 65</label>
-					<h3 id="item1-inventar">#3556</h3>
-				</div>
-
-				<div id="item2" class="item">
-					<input type="checkbox" id="item2-check">
-					<h4 id="item2-amount">1x</h4>
-					<label for="item2-check" id="item2-object">NBSJ3410</label>
-					<h3 id="item2-inventar"> #3557</h3>
+					<label for="item1-check" id="item1-object">NBSJ3410</label>
+					<h3 id="item1-inventar"> #3557</h3>
 				</div>
 			</div>
 
 				<!-- Content -->
 			<div class="unterschrift">
-				<div class="row"> <p>Geprüft und bestätigt von David Lowicki</p> </div>
+				<div class="row"> <p>Geprüft und bestätigt von <span id="wplBearbeiter">David Lowicki</span></p> </div>
 				<div class="row">
 		 			<canvas id="sig-canvas" width="620" height="160">
 		 				Ihr Browser unterstüzt keine digitale Unterschrift!
@@ -173,21 +173,29 @@
         submitBtn.addEventListener("click", function(e) {
           var dataUrl = canvas.toDataURL();
           var wplID = "<?php echo $wplID; ?>";
+          var wplBearbeiter = $('#wplBearbeiter').text();
 
           var items = [];
           $('.item').each(function(index){
-            console.log($('#item'+index+'-check'))
+            var check = $('#item'+index+'-check').is(':checked');
+            var amount = $('#item'+index+'-amount').text();
+            var object = $('#item'+index+'-object').text();
+            var inv = $('#item'+index+'-inventar').text();
+            var temp = [check,amount,object,inv];
+            items.push(temp);
           });
 
+          items = JSON.stringify(items);
 
-          /*$.ajax({
+          // Bevor PDF generiert werden kann, Daten vergleichen mit den Daten die von Matrix42 gesendet wurden ( zwecks Manipulation der Daten )
+          $.ajax({
             url: "pdf.php",
             method: "POST",
-            data: {jSign: dataUrl, jID: wplID},
+            data: {jSign: dataUrl, jID: wplID, jBearbeiter: wplBearbeiter, jData: items},
             success: function(result) {
               
             }
-          });*/
+          });
         }, false);
       })();
 		</script>

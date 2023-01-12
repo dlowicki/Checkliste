@@ -1,26 +1,21 @@
 <?php
 
-if(!isset($_POST['jSign']) && !isset($_POST['jID']))
+if(!isset($_POST['jSign']) && !isset($_POST['jID']) && !isset($_POST['jData']) && !isset($_POST['jBearbeiter']))
 {
-   echo "PDF konnte nicht generiert werden, Unterschrift wurde nicht gesetzt";
+   echo "PDF konnte nicht generiert werden <br>Fehler bei Datenübertragung";
    return;
 }
 
 $wplID = $_POST['jID'];
 $wplDatum = date("d.m.Y");
-$wplBearbeiter = "David Lowicki";
+$wplBearbeiter = $_POST['jBearbeiter'];
 
 //$wplHeader = '<img src="">';
 
-$wplItems = array(
-    array(true, '1x','Jabra 2 Evolve 65','#3556'),
-    array(false, '1x','NBSJ3410','#3557'),
-    array(true, '1x','Maus','#3558'),
-    array(true, '1x','Tastatur','#3559')
-);
+$wplItems = json_decode($_POST['jData'], true);
 
-$pdfName = 'Checkliste_WPL' . $wplID . '.pdf';
-
+$pdfName = 'Checkliste WPL' . $wplID . ' '.$wplBearbeiter.'.pdf';
+$pdfName = str_replace(' ','_',$pdfName);
 
 /*-------------------------------------------------*/
 
@@ -76,9 +71,9 @@ $html = '
  $html .= '</table>';
 
  $html .=   '<div></div><div></div><div></div>
-            <h3 style="font-weight: 100; font-size: 11rem;">Unterschrieben und abgesegnet</h3>
-            <div></div>
-            <img src="'.$_POST["jSign"].'">
+            <h3 style="font-weight: 100; font-size: 11rem;">Unterschrieben am '.$wplDatum.'</h3>
+            <img src="'.$_POST["jSign"].'" width="300" height="80">
+            <h3 style="font-weight: 100; font-size: 11rem;">'.$wplBearbeiter.'</h3>
             ';
  
 
@@ -89,8 +84,8 @@ $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8',
  
 $pdf->SetCreator(PDF_CREATOR);
 $pdf->SetAuthor($wplBearbeiter);
-$pdf->SetTitle('Checkliste '.$wplID);
-$pdf->SetSubject('Checkliste '.$wplID);
+$pdf->SetTitle('Checkliste '.$wplID . ' ' . $wplBearbeiter);
+$pdf->SetSubject('Checkliste '.$wplID . ' ' . $wplBearbeiter);
  
  
 // Header und Footer Informationen
