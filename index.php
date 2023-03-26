@@ -9,32 +9,44 @@
     <script src="https://code.jquery.com/jquery-3.6.3.js" integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM=" crossorigin="anonymous"></script>
 	</head>
 	<body>
-		<?php
+        <?php
 		if(!isset($_GET['wplID']))
 		{
 			echo '<form method="GET">';
-			echo '<input type="text" name="wplID" placeholder="ArbeitsplatzID..."><br>';
-			echo '<input type="submit" id="btn-wplid" value="Arbeitsplatz aufsuchen">';
+			echo '<input type="text" name="wplID" placeholder="ArbeitsplatzID...">';
+            echo '<span> oder </span>';
+            echo '<input type="text" name="userID" placeholder="Mitarbeiter-Name..."><br>';
+			echo '<input type="submit" id="btn-wplid" value="Suchen">';
 			echo '</form>';
 			return;
 		}
 
-		//wplID ist gesetzt
-		$wplID = (int) filter_var($_GET['wplID'], FILTER_SANITIZE_NUMBER_INT);
-    // Wenn Länge von ID kleiner als 2 => Abbrechen und zurücksetzen
-		if(strlen($wplID) < 2) { header('Location: index.php'); return; }
-    // Überprüfen, ob ID in Matrix Datenbank existiert und ggf. Geräte aus Datenbank ziehen
+        $wplID = $_GET['wplID'];
+        $userID = $_GET['userID'];
 
-    // Wenn Geräte aus Datenbank kleiner als 1 => Ausgeben, dass keine Geräte für diesen Arbeitsplatz registriert sind
+        // Wenn WPLID gesetzt ist
+        if($wplID != null && $wplID != "" && strlen($wplID) > 0){
+            //wplID ist gesetzt
+            $wplID = (int) filter_var($_GET['wplID'], FILTER_SANITIZE_NUMBER_INT);
+            // Wenn Länge von ID kleiner als 2 => Abbrechen und zurücksetzen
+            if(strlen($wplID) < 2) { header('Location: index.php'); return; }
+            // Falls Benutzername gesetzt wurde, checken ob WPLID mit Benutzername passt
+            // Suche in Datenbank nach WPLID
+        }
+
+        // Wenn UserID gesetzt ist
+        if($userID != null && $userID != "" && strlen($userID) > 0){
+            // Falls WPLID gesetzt wurde, checken ob WPLID mit Benutzername passt
+            // Suche in Datenbank nach WPLID
+        }
 
 
-		?>
-		<!--<div class="box-input-wpl">
-			<h2>Identifikation eintragen</h2>
-			<input type='text' id='wplID' placeholder='Identifikation...'>
-			<button>Absenden</button>
-		</div>-->
 
+        // Überprüfen, ob ID in Matrix Datenbank existiert und ggf. Geräte aus Datenbank ziehen
+        // Wenn Geräte aus Datenbank kleiner als 1 => Ausgeben, dass keine Geräte für diesen Arbeitsplatz registriert sind
+
+
+        ?>
 		<div class="container-wpl">
 			<!-- Logo von Schrauben-Jäger / Werkzeug-Jöger -->
 			<h2>Arbeitsplatz WPL<?php echo $wplID ?></h2>
