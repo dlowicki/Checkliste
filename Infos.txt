@@ -1,0 +1,1 @@
+für pdf API muss die extension gd in der php.ini aktiviert werden

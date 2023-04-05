@@ -205,7 +205,7 @@
             method: "POST",
             data: {jSign: dataUrl, jID: wplID, jBearbeiter: wplBearbeiter, jData: items},
             success: function(result) {
-              
+                console.log(result);
             }
           });
         }, false);
