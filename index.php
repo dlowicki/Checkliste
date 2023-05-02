@@ -1,5 +1,5 @@
 <?php
-require_once('sql.php');
+//require_once('sql.php');
 ?>
 <!DOCTYPE html>
 <html>
@@ -13,64 +13,107 @@ require_once('sql.php');
 	</head>
 	<body>
         <?php
-		if(!isset($_GET['wplUser']))
+        // Erste Abfrage, Vorname.Nachname eingeben
+		if(!isset($_POST['wplUser']) && !isset($_POST['btn-wplid']))
 		{
-			echo '<form method="GET">';
+			echo '<form action="index.php" method="POST">';
 			echo '<p style="margin-bottom: 5px">Vorname.Nachname eingeben</p>';
             echo '<input type="text" name="wplUser" placeholder="Vorname.Nachname"><br>';
-			echo '<input type="submit" id="btn-wplid" value="Suchen">';
+			echo '<input type="submit" id="btn-wplid" name="btn-wplid" value="Suchen">';
 			echo '</form>';
 			return;
 		}
 
-        $wplUser = $_GET['wplUser'];
 
-        //if($wplUser != null && $wplUser != "" && strlen($wplUser) > 0 && strpos($wplUser, '.')){}
+        if(isset($_POST['key']) && isset($_POST['wplUser']) && isset($_POST['btn-key']))
+        {
+            // Wenn Datei nicht gefunden wurde
+            if(!file_exists('data\\'.$_POST['wplUser'].'.txt')) {
+                echo 'Benutzerfreigabe wurde nicht gefunden!<br>';
+                echo '<a href="index.php">Zurück</a>';
+                return;
+            }
+
+            // Wenn Schluessel aus txt = Schluessl von übergabe
+            $file = file_get_contents('data\\'.$_POST["wplUser"].'.txt', true);
+            if($_POST['key'] != $file) {
+                echo 'Schluessel ist nicht korrekt!<br>';
+                echo '<a href="index.php">Zurück</a>';
+                return;
+            }
+
+            $wplUser = $_POST['wplUser'];
+
+            //if($wplUser != null && $wplUser != "" && strlen($wplUser) > 0 && strpos($wplUser, '.')){}
             //$wplID = (int) filter_var($_GET['wplID'], FILTER_SANITIZE_NUMBER_INT);
 
-		$wplUserSplitted = explode('.',$wplUser);
-		$userID = getUserID($wplUserSplitted[0],$wplUserSplitted[1]);		
-		$assets = getAssetFromWorkplace($userID);
-		
+            $wplUserSplitted = explode('.',$wplUser);
+            $userID = getUserID($wplUserSplitted[0],$wplUserSplitted[1]);
+            $assets = getAssetFromWorkplace($userID);
 
+            echo '<div class="container-wpl">';
+            echo '<h2>Arbeitsplatz von '.$wplUser.'</h2>';
+            echo '<p>Hardware markieren, die erhalten wurde:</p>';
+
+            echo '<div class="items-wpl-1">';
+            $iCount = 0;
+            foreach($assets as $a){
+                echo '<div id="item'.$iCount.'" class="item">';
+                echo '<input type="checkbox" id="item'.$iCount.'-check">';
+                echo '<h4>1x</h4>';
+                echo '<label for="item'.$iCount.'-check" id="item'.$iCount.'-object">'.$a["Name"].'</label>';
+                echo '<h3 id="item'.$iCount.'-inventar">#'.$a["in"].'</h3>';
+                echo '</div>';
+                $iCount++;
+            }
+            echo '</div>';
+
+
+            echo '<div class="unterschrift">';
+            echo '<div class="row">';
+            echo '<p>Geprüft und bestätigt von <span id="wplBearbeiter">';
+            echo $wplUserSplitted[0] . ' ' . $wplUserSplitted[1];
+            echo '</span></p>';
+            echo '</div>';
+            echo '<div class="row">
+                    <canvas id="sig-canvas" width="620" height="160">
+                        Ihr Browser unterstüzt keine digitale Unterschrift!
+                    </canvas>
+                </div>
+                <div class="row-btn">
+                    <div class="">
+                        <button class="sig-btn" id="sig-sendData">Bestätigen</button>
+                        <button class="sig-btn" id="sig-clearBtn">Unterschrift löschen</button>
+                    </div>
+                </div>
+            </div>';
+
+        } else {
+            // Wenn Datei Vorname.Nachname.txt nicht gefunden wurde
+            if(!file_exists('data\\'.$_POST['wplUser'].'.txt'))
+            {
+                echo 'Benutzerfreigabe wurde nicht gefunden<br>';
+                echo '<a href="index.php">Zurück</a>';
+                return;
+            }
+
+            // Wenn Vorname.Nachname gefunden wurde => Neues Formular ausgeben
+            echo '<form action="index.php" method="POST">';
+            echo '<p style="margin-bottom: 5px">Schluessel eingeben</p>';
+            echo '<input type="text" name="key" id="key" placeholder="Schluessel..."><br>';
+            echo '<input type="hidden" id="wplUser" name="wplUser" value="'.$_POST["wplUser"].'">';
+            echo '<input type="submit" id="btn-key" name="btn-key" value="Abfragen">';
+            echo '</form>';
+        }
         ?>
-		<div class="container-wpl">
-			<!-- Logo von Schrauben-Jäger / Werkzeug-Jöger -->
-			<h2>Arbeitsplatz von <?php echo $wplUser; ?></h2>
 
-			<p>Hardware markieren, die erhalten wurde:</p>
-			
-			<div class='items-wpl-1'>
-				<?php
-				$iCount = 0;
-				foreach($assets as $a){
-					echo '<div id="item'.$iCount.'" class="item">';
-					echo '<input type="checkbox" id="item'.$iCount.'-check">';
-					echo '<h4>1x</h4>';
-					echo '<label for="item'.$iCount.'-check" id="item'.$iCount.'-object">'.$a["Name"].'</label>';
-					echo '<h3 id="item'.$iCount.'-inventar">#'.$a["in"].'</h3>';
-					echo '</div>';
-					$iCount++;
-				}
-				?>
-			</div>
 
-				<!-- Content -->
-			<div class="unterschrift">
-				<div class="row"> <p>Geprüft und bestätigt von <span id="wplBearbeiter"><?php echo $wplUserSplitted[0] . ' ' . $wplUserSplitted[1] ?></span></p> </div>
-				<div class="row">
-		 			<canvas id="sig-canvas" width="620" height="160">
-		 				Ihr Browser unterstüzt keine digitale Unterschrift!
-		 			</canvas>
-				</div>
-				<div class="row-btn">
-					<div class="">
-						<button class="sig-btn" id="sig-sendData">Bestätigen</button>
-						<button class="sig-btn" id="sig-clearBtn">Unterschrift löschen</button>
-					</div>
-				</div>
-			</div>
-		</div>
+
+
+        
+        
+
+        
 		
 		<script>
 			(function() {
