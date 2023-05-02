@@ -1,3 +1,6 @@
+<?php
+require_once('sql.php');
+?>
 <!DOCTYPE html>
 <html>
 	<head>
@@ -10,68 +13,51 @@
 	</head>
 	<body>
         <?php
-		if(!isset($_GET['wplID']))
+		if(!isset($_GET['wplUser']))
 		{
 			echo '<form method="GET">';
-			echo '<input type="text" name="wplID" placeholder="ArbeitsplatzID...">';
-            echo '<span> oder </span>';
-            echo '<input type="text" name="userID" placeholder="Mitarbeiter-Name..."><br>';
+			echo '<p style="margin-bottom: 5px">Vorname.Nachname eingeben</p>';
+            echo '<input type="text" name="wplUser" placeholder="Vorname.Nachname"><br>';
 			echo '<input type="submit" id="btn-wplid" value="Suchen">';
 			echo '</form>';
 			return;
 		}
 
-        $wplID = $_GET['wplID'];
-        $userID = $_GET['userID'];
+        $wplUser = $_GET['wplUser'];
 
-        // Wenn WPLID gesetzt ist
-        if($wplID != null && $wplID != "" && strlen($wplID) > 0){
-            //wplID ist gesetzt
-            $wplID = (int) filter_var($_GET['wplID'], FILTER_SANITIZE_NUMBER_INT);
-            // Wenn Länge von ID kleiner als 2 => Abbrechen und zurücksetzen
-            if(strlen($wplID) < 2) { header('Location: index.php'); return; }
-            // Falls Benutzername gesetzt wurde, checken ob WPLID mit Benutzername passt
-            // Suche in Datenbank nach WPLID
-        }
+        //if($wplUser != null && $wplUser != "" && strlen($wplUser) > 0 && strpos($wplUser, '.')){}
+            //$wplID = (int) filter_var($_GET['wplID'], FILTER_SANITIZE_NUMBER_INT);
 
-        // Wenn UserID gesetzt ist
-        if($userID != null && $userID != "" && strlen($userID) > 0){
-            // Falls WPLID gesetzt wurde, checken ob WPLID mit Benutzername passt
-            // Suche in Datenbank nach WPLID
-        }
-
-
-
-        // Überprüfen, ob ID in Matrix Datenbank existiert und ggf. Geräte aus Datenbank ziehen
-        // Wenn Geräte aus Datenbank kleiner als 1 => Ausgeben, dass keine Geräte für diesen Arbeitsplatz registriert sind
-
+		$wplUserSplitted = explode('.',$wplUser);
+		$userID = getUserID($wplUserSplitted[0],$wplUserSplitted[1]);		
+		$assets = getAssetFromWorkplace($userID);
+		
 
         ?>
 		<div class="container-wpl">
 			<!-- Logo von Schrauben-Jäger / Werkzeug-Jöger -->
-			<h2>Arbeitsplatz WPL<?php echo $wplID ?></h2>
+			<h2>Arbeitsplatz von <?php echo $wplUser; ?></h2>
 
-			<p>Bitte die Gegenstände markieren, die empfangen wurden:</p>
-
+			<p>Hardware markieren, die erhalten wurde:</p>
+			
 			<div class='items-wpl-1'>
-				<div id="item0" class="item">
-					<input type="checkbox" id="item0-check">
-					<h4 id="item0-amount">1x</h4>
-					<label for="item0-check" id="item0-object"> Jabra 2 Evolve 65</label>
-					<h3 id="item0-inventar">#3556</h3>
-				</div>
-
-				<div id="item1" class="item">
-					<input type="checkbox" id="item1-check">
-					<h4 id="item1-amount">1x</h4>
-					<label for="item1-check" id="item1-object">NBSJ3410</label>
-					<h3 id="item1-inventar"> #3557</h3>
-				</div>
+				<?php
+				$iCount = 0;
+				foreach($assets as $a){
+					echo '<div id="item'.$iCount.'" class="item">';
+					echo '<input type="checkbox" id="item'.$iCount.'-check">';
+					echo '<h4>1x</h4>';
+					echo '<label for="item'.$iCount.'-check" id="item'.$iCount.'-object">'.$a["Name"].'</label>';
+					echo '<h3 id="item'.$iCount.'-inventar">#'.$a["in"].'</h3>';
+					echo '</div>';
+					$iCount++;
+				}
+				?>
 			</div>
 
 				<!-- Content -->
 			<div class="unterschrift">
-				<div class="row"> <p>Geprüft und bestätigt von <span id="wplBearbeiter">David Lowicki</span></p> </div>
+				<div class="row"> <p>Geprüft und bestätigt von <span id="wplBearbeiter"><?php echo $wplUserSplitted[0] . ' ' . $wplUserSplitted[1] ?></span></p> </div>
 				<div class="row">
 		 			<canvas id="sig-canvas" width="620" height="160">
 		 				Ihr Browser unterstüzt keine digitale Unterschrift!
@@ -83,11 +69,9 @@
 						<button class="sig-btn" id="sig-clearBtn">Unterschrift löschen</button>
 					</div>
 				</div>
-	</div>
-
+			</div>
 		</div>
-
-
+		
 		<script>
 			(function() {
         window.requestAnimFrame = (function(callback) {
@@ -184,7 +168,6 @@
         // Bestätigen anklicken = Daten werden an pdf.php versendet
         submitBtn.addEventListener("click", function(e) {
           var dataUrl = canvas.toDataURL();
-          var wplID = "<?php echo $wplID; ?>";
           var wplBearbeiter = $('#wplBearbeiter').text();
 
           var items = [];
@@ -198,12 +181,14 @@
           });
 
           items = JSON.stringify(items);
+		  
+		  console.log(items)
 
           // Bevor PDF generiert werden kann, Daten vergleichen mit den Daten die von Matrix42 gesendet wurden ( zwecks Manipulation der Daten )
           $.ajax({
             url: "pdf.php",
             method: "POST",
-            data: {jSign: dataUrl, jID: wplID, jBearbeiter: wplBearbeiter, jData: items},
+            data: {jSign: dataUrl, jBearbeiter: wplBearbeiter, jData: items},
             success: function(result) {
                 console.log(result);
             }

@@ -1,12 +1,11 @@
 <?php
 
-if(!isset($_POST['jSign']) && !isset($_POST['jID']) && !isset($_POST['jData']) && !isset($_POST['jBearbeiter']))
+if(!isset($_POST['jSign']) && !isset($_POST['jData']) && !isset($_POST['jBearbeiter']))
 {
    echo "PDF konnte nicht generiert werden <br>Fehler bei Datenübertragung";
    return;
 }
 
-$wplID = $_POST['jID'];
 $wplDatum = date("d.m.Y");
 $wplBearbeiter = $_POST['jBearbeiter'];
 
@@ -14,7 +13,7 @@ $wplBearbeiter = $_POST['jBearbeiter'];
 
 $wplItems = json_decode($_POST['jData'], true);
 
-$pdfName = 'Checkliste WPL' . $wplID . ' '.$wplBearbeiter.'.pdf';
+$pdfName = 'Checkliste '.$wplBearbeiter.' ' . $wplDatum . '.pdf';
 $pdfName = str_replace(' ','_',$pdfName);
 
 /*-------------------------------------------------*/
@@ -22,7 +21,7 @@ $pdfName = str_replace(' ','_',$pdfName);
 $html = '
 <h4 style="text-align: right; font-weight: 100;">Erstellt am '.$wplDatum.'</h4>
 <div></div><div></div><div></div>
-<h2 style="font-weight: 100;">Checkliste von Arbeitsplatz <b>WPL'.$wplID.'</b></h2>
+<h2 style="font-weight: 100;">Checkliste von <b>'.$wplBearbeiter.'</b></h2>
 <div></div><div></div>
 <h3 style="font-weight: 100; font-size: 11rem;">Hiermit bestätige ich den Erhalt der folgenden <b>Gegenstände</b> am <b>'.$wplDatum.'</b></h3>
 <br>
@@ -37,7 +36,7 @@ $html = '
  foreach ($wplItems as $item) {
     if($item[0] == true){
         $html .= '<tr>
-                    <td>'.$item[1].'</td>
+                    <td>1</td>
                     <td style="text-align: center">'.$item[2].'</td>
                     <td style="text-align: center">'.$item[3].'</td>
                  </tr>';
@@ -62,7 +61,7 @@ $html = '
  foreach ($wplItems as $item) {
     if($item[0] == false){
         $html .= '<tr>
-                    <td>'.$item[1].'</td>
+                    <td>1</td>
                     <td style="text-align: center">'.$item[2].'</td>
                     <td style="text-align: center">'.$item[3].'</td>
                  </tr>';
@@ -84,8 +83,8 @@ $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8',
  
 $pdf->SetCreator(PDF_CREATOR);
 $pdf->SetAuthor($wplBearbeiter);
-$pdf->SetTitle('Checkliste '.$wplID . ' ' . $wplBearbeiter);
-$pdf->SetSubject('Checkliste '.$wplID . ' ' . $wplBearbeiter);
+$pdf->SetTitle('Checkliste ' . $wplBearbeiter);
+$pdf->SetSubject('Checkliste ' . $wplBearbeiter);
  
  
 // Header und Footer Informationen
