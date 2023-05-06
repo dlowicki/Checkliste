@@ -21,6 +21,7 @@
                 {
                     if(file_exists("data\\$user.txt"))
                     {
+                        echo '<a href="create.php" class="nav-button">Startseite</a>';
                         echo 'Schluessel wurde schon generiert!<br>';
                         echo 'Soll der Schluessel fuer '.$user.' entfernt werden?<br>';
                         echo '<a href="index.php">Zurueck</a>';
@@ -44,6 +45,7 @@
                 echo '<a href="create.php">Reload</a>';
                 return;
             } else {
+                echo '<a href="index.php" class="nav-button">Startseite</a>';
                 echo '<form action="create.php" method="GET">
 		                <p style="margin-bottom: 5px">Vorname.Nachname eingeben</p>
                         <input type="text" name="wplUser" placeholder="Vorname.Nachname"><br>

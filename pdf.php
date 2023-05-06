@@ -121,5 +121,10 @@ $pdf->writeHTML($html, true, false, true, false, '');
 $pdf->Output(dirname(__FILE__).'/'.$pdfName, 'F');
 //echo 'PDF herunterladen: <a href="'.$pdfName.'">'.$pdfName.'</a>';
  
+if(file_exists($pdfName))
+{
+    // Mail schicken an Helpdesk
+    header('Location: index.php');
+}
 
 ?>

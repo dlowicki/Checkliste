@@ -1,5 +1,5 @@
 <?php
-//require_once('sql.php');
+require_once('sql.php');
 ?>
 <!DOCTYPE html>
 <html>
@@ -16,6 +16,7 @@
         // Erste Abfrage, Vorname.Nachname eingeben
 		if(!isset($_POST['wplUser']) && !isset($_POST['btn-wplid']))
 		{
+            echo '<a href="create.php" class="nav-button">Schluessel erstellen</a>';
 			echo '<form action="index.php" method="POST">';
 			echo '<p style="margin-bottom: 5px">Vorname.Nachname eingeben</p>';
             echo '<input type="text" name="wplUser" placeholder="Vorname.Nachname"><br>';
