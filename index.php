@@ -12,36 +12,52 @@ require_once('sql.php');
     <script src="https://code.jquery.com/jquery-3.6.3.js" integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM=" crossorigin="anonymous"></script>
 	</head>
 	<body>
-        <?php
-        // Erste Abfrage, Vorname.Nachname eingeben
+    <?php
+    // Erste Abfrage, Vorname.Nachname eingeben
 		if(!isset($_POST['wplUser']) && !isset($_POST['btn-wplid']))
 		{
-            echo '<a href="create.php" class="nav-button">Schluessel erstellen</a>';
+      echo '<a href="create.php" class="nav-button">Schlüssel erstellen</a>';
 			echo '<form action="index.php" method="POST">';
 			echo '<p style="margin-bottom: 5px">Vorname.Nachname eingeben</p>';
-            echo '<input type="text" name="wplUser" placeholder="Vorname.Nachname"><br>';
+      echo '<input type="text" name="wplUser" placeholder="Vorname.Nachname"><br>';
+
+      echo '<div class="wrapper">';
+        echo '<div class="toggle_radio">';
+          echo '<input type="radio" class="toggle_option" id="eintritt" name="toggle_option" checked>';
+          echo '<input type="radio" class="toggle_option" id="austritt" name="toggle_option">';
+          echo '<label for="eintritt"><p>Eintritt</p></label>';
+          echo '<label for="austritt"><p>Austritt</p></label>';
+          echo '<div class="toggle_option_slider">';
+        echo '</div>';
+      echo '</div>';
+
 			echo '<input type="submit" id="btn-wplid" name="btn-wplid" value="Suchen">';
 			echo '</form>';
 			return;
 		}
 
-
         if(isset($_POST['key']) && isset($_POST['wplUser']) && isset($_POST['btn-key']))
         {
-            // Wenn Datei nicht gefunden wurde
+            // Wenn Datei nicht gefunden wurde => Bei Fehler wird Skript hier beendet
             if(!file_exists('data\\'.$_POST['wplUser'].'.txt')) {
-                echo 'Benutzerfreigabe wurde nicht gefunden!<br>';
+                echo '<div class="msg_error">';
+                echo '<h3>Benutzerfreigabe wurde nicht gefunden!</h3>';
                 echo '<a href="index.php">Zurück</a>';
+                echo '</div>';
                 return;
             }
 
-            // Wenn Schluessel aus txt = Schluessl von übergabe
+            // Überprüfen, ob Schlüssel aus TXT Datei korrekt ist => Bei Fehler wird hier Skript beendet
             $file = file_get_contents('data\\'.$_POST["wplUser"].'.txt', true);
             if($_POST['key'] != $file) {
-                echo 'Schluessel ist nicht korrekt!<br>';
+                echo '<div class="msg_error">';
+                echo '<h3>Schluessel ist nicht korrekt!</h3>';
                 echo '<a href="index.php">Zurück</a>';
+                echo '</div>';
                 return;
             }
+
+            // Es wurde kein Fehler gefunden also läuft Skript weiter
 
             $wplUser = $_POST['wplUser'];
 
@@ -93,8 +109,10 @@ require_once('sql.php');
             // Wenn Datei Vorname.Nachname.txt nicht gefunden wurde
             if(!file_exists('data\\'.$_POST['wplUser'].'.txt'))
             {
-                echo 'Benutzerfreigabe wurde nicht gefunden<br>';
+                echo '<div class="msg_error">';
+                echo '<h3>Benutzerfreigabe wurde nicht gefunden!</h3>';
                 echo '<a href="index.php">Zurück</a>';
+                echo '</div>';
                 return;
             }
 

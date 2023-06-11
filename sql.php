@@ -1,5 +1,5 @@
 <?php
-sqlsrv_configure('WarningsReturnAsErrors',0);
+//sqlsrv_configure('WarningsReturnAsErrors',0);
 
 
 /*
