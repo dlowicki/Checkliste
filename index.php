@@ -16,28 +16,31 @@ require_once('sql.php');
     // Erste Abfrage, Vorname.Nachname eingeben
 		if(!isset($_POST['wplUser']) && !isset($_POST['btn-wplid']))
 		{
-      echo '<a href="create.php" class="nav-button">Schlüssel erstellen</a>';
+      
 			echo '<form action="index.php" method="POST">';
 			echo '<p style="margin-bottom: 5px">Vorname.Nachname eingeben</p>';
-      echo '<input type="text" name="wplUser" placeholder="Vorname.Nachname"><br>';
+      echo '<input type="text" name="wplUser" placeholder="Vorname.Nachname"><br><br>';
 
       echo '<div class="wrapper">';
         echo '<div class="toggle_radio">';
-          echo '<input type="radio" class="toggle_option" id="eintritt" name="toggle_option" checked>';
-          echo '<input type="radio" class="toggle_option" id="austritt" name="toggle_option">';
+          echo '<input type="radio" class="toggle_option" id="eintritt" value="eintritt" name="toggle_option" checked>';
+          echo '<input type="radio" class="toggle_option" id="austritt" value="austritt" name="toggle_option">';
           echo '<label for="eintritt"><p>Eintritt</p></label>';
           echo '<label for="austritt"><p>Austritt</p></label>';
           echo '<div class="toggle_option_slider">';
         echo '</div>';
-      echo '</div>';
+      echo '</div><br>';
 
 			echo '<input type="submit" id="btn-wplid" name="btn-wplid" value="Suchen">';
 			echo '</form>';
+
+      echo '<a href="create.php" class="nav-button">Schlüssel erstellen</a>';
 			return;
 		}
 
-        if(isset($_POST['key']) && isset($_POST['wplUser']) && isset($_POST['btn-key']))
+        if(isset($_POST['key']) && isset($_POST['wplUser']) && isset($_POST['btn-key']) && isset($_POST['type']))
         {
+
             // Wenn Datei nicht gefunden wurde => Bei Fehler wird Skript hier beendet
             if(!file_exists('data\\'.$_POST['wplUser'].'.txt')) {
                 echo '<div class="msg_error">';
@@ -65,12 +68,20 @@ require_once('sql.php');
             //$wplID = (int) filter_var($_GET['wplID'], FILTER_SANITIZE_NUMBER_INT);
 
             $wplUserSplitted = explode('.',$wplUser);
-            $userID = getUserID($wplUserSplitted[0],$wplUserSplitted[1]);
-            $assets = getAssetFromWorkplace($userID);
+            //$userID = getUserID($wplUserSplitted[0],$wplUserSplitted[1]);
+            //$assets = getAssetFromWorkplace($userID);
+            // Überprüfe Typ Eintritt | Austritt => Standard ist eintritt
 
             echo '<div class="container-wpl">';
             echo '<h2>Arbeitsplatz von '.$wplUser.'</h2>';
-            echo '<p>Hardware markieren, die erhalten wurde:</p>';
+            echo '<h3>Generiert wird <span id="wplType">'.$_POST['type'].'</span></h3>';
+            if($_POST['type'] == 'austritt')
+            {
+              echo '<p>Hardware markieren, die abgegeben wurde:</p>';
+            } else {
+              echo '<p>Hardware markieren, die erhalten wurde:</p>';
+            }
+            
 
             echo '<div class="items-wpl-1">';
             $iCount = 0;
@@ -121,6 +132,7 @@ require_once('sql.php');
             echo '<p style="margin-bottom: 5px">Schluessel eingeben</p>';
             echo '<input type="text" name="key" id="key" placeholder="Schluessel..."><br>';
             echo '<input type="hidden" id="wplUser" name="wplUser" value="'.$_POST["wplUser"].'">';
+            echo '<input type="hidden" id="type" name="type" value="'.$_POST["toggle_option"].'">';
             echo '<input type="submit" id="btn-key" name="btn-key" value="Abfragen">';
             echo '</form>';
         }
@@ -231,6 +243,7 @@ require_once('sql.php');
         submitBtn.addEventListener("click", function(e) {
           var dataUrl = canvas.toDataURL();
           var wplBearbeiter = $('#wplBearbeiter').text();
+          var wplType = $('#wplType').text();
 
           var items = [];
           $('.item').each(function(index){
@@ -244,13 +257,13 @@ require_once('sql.php');
 
           items = JSON.stringify(items);
 		  
-		  console.log(items)
+		    console.log(items)
 
           // Bevor PDF generiert werden kann, Daten vergleichen mit den Daten die von Matrix42 gesendet wurden ( zwecks Manipulation der Daten )
           $.ajax({
             url: "pdf.php",
             method: "POST",
-            data: {jSign: dataUrl, jBearbeiter: wplBearbeiter, jData: items},
+            data: {jSign: dataUrl, jBearbeiter: wplBearbeiter, jType:wplType, jData: items},
             success: function(result) {
                 console.log(result);
             }

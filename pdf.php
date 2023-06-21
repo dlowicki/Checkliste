@@ -1,6 +1,6 @@
 <?php
 
-if(!isset($_POST['jSign']) && !isset($_POST['jData']) && !isset($_POST['jBearbeiter']))
+if(!isset($_POST['jSign']) && !isset($_POST['jData']) && !isset($_POST['jType']) && !isset($_POST['jBearbeiter']))
 {
    echo "PDF konnte nicht generiert werden <br>Fehler bei Datenübertragung";
    return;
@@ -8,12 +8,13 @@ if(!isset($_POST['jSign']) && !isset($_POST['jData']) && !isset($_POST['jBearbei
 
 $wplDatum = date("d.m.Y");
 $wplBearbeiter = $_POST['jBearbeiter'];
+$wplType = $_POST['jType'];
 
 //$wplHeader = '<img src="">';
 
 $wplItems = json_decode($_POST['jData'], true);
 
-$pdfName = 'Checkliste '.$wplBearbeiter.' ' . $wplDatum . '.pdf';
+$pdfName = 'Checkliste '. $wplType .' '.$wplBearbeiter.' ' . $wplDatum . '.pdf';
 $pdfName = str_replace(' ','_',$pdfName);
 
 /*-------------------------------------------------*/
@@ -22,9 +23,14 @@ $html = '
 <h4 style="text-align: right; font-weight: 100;">Erstellt am '.$wplDatum.'</h4>
 <div></div><div></div><div></div>
 <h2 style="font-weight: 100;">Checkliste von <b>'.$wplBearbeiter.'</b></h2>
-<div></div><div></div>
-<h3 style="font-weight: 100; font-size: 11rem;">Hiermit bestätige ich den Erhalt der folgenden <b>Gegenstände</b> am <b>'.$wplDatum.'</b></h3>
-<br>
+<div></div><div></div>';
+if($wplType == 'austritt')
+{
+$html .= '<h3 style="font-weight: 100; font-size: 11rem;">Hiermit bestätige ich die Rückgabe der folgenden <b>Gegenstände</b> am <b>'.$wplDatum.'</b></h3>';
+} else {
+   $html .= '<h3 style="font-weight: 100; font-size: 11rem;">Hiermit bestätige ich den Erhalt der folgenden <b>Gegenstände</b> am <b>'.$wplDatum.'</b></h3>';
+}
+$html .='<br>
 <br>
 <table cellpadding="5" cellspacing="0" style="width: 80%;" border="0">
  <tr style="background-color: #cccccc; padding:5px;">
@@ -83,8 +89,8 @@ $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8',
  
 $pdf->SetCreator(PDF_CREATOR);
 $pdf->SetAuthor($wplBearbeiter);
-$pdf->SetTitle('Checkliste ' . $wplBearbeiter);
-$pdf->SetSubject('Checkliste ' . $wplBearbeiter);
+$pdf->SetTitle('Checkliste ' . $wplType . ' ' . $wplBearbeiter);
+$pdf->SetSubject('Checkliste ' . $wplType . ' ' . $wplBearbeiter);
  
  
 // Header und Footer Informationen
@@ -124,7 +130,7 @@ $pdf->Output(dirname(__FILE__).'/'.$pdfName, 'F');
 if(file_exists($pdfName))
 {
     // Mail schicken an Helpdesk
-    header('Location: index.php');
+    header('Location: mail.php');
 }
 
 ?>
