@@ -1,6 +1,6 @@
 <?php
 //sqlsrv_configure('WarningsReturnAsErrors',0);
-
+include_once("sql/config.php");
 
 /*
 Erhalte UserID
@@ -16,11 +16,6 @@ SELECT InventoryNumber, Name, serialnumber from dbo.SPSAssetClassBase WHERE Work
 
 
 function getUserID($vorname, $nachname){
-	$serverName = "SQL2016\MATRIX42"; //serverName\instanceName
-	$connectionInfo = array( "Database"=>"M42Production", "UID"=>"sa", "PWD"=>"");
-	$conn = sqlsrv_connect( $serverName, $connectionInfo);
-
-	if( !$conn ) { echo "Connection could not be established.<br />"; die( print_r( sqlsrv_errors(), true)); }
 	$result = sqlsrv_query( $conn, "SELECT ID from dbo.SPSUserClassBase WHERE LastName = '$nachname' AND FirstName = '$vorname'");
 	if($result === false) {
 		die( print_r( sqlsrv_errors(), true) );
@@ -37,11 +32,6 @@ function getUserID($vorname, $nachname){
 
 
 function getAssetFromWorkplace($userID) {
-	$serverName = "SQL2016\MATRIX42"; //serverName\instanceName
-	$connectionInfo = array( "Database"=>"M42Production", "UID"=>"sa", "PWD"=>"");
-	$conn = sqlsrv_connect( $serverName, $connectionInfo);
-
-	if( !$conn ) { echo "Connection could not be established.<br />"; die( print_r( sqlsrv_errors(), true)); }
 	$result = sqlsrv_query( $conn, "SELECT InventoryNumber, dbo.SPSStockKeepingUnitClassBase.Model from dbo.SPSAssetClassBase INNER JOIN dbo.SPSStockKeepingUnitClassBase ON dbo.SPSAssetClassBase.SKU = dbo.SPSStockKeepingUnitClassBase.ID WHERE dbo.SPSAssetClassBase.AssignedUser = '$userID'");
 	if($result === false) { die( print_r( sqlsrv_errors(), true) ); return false; }
 		
